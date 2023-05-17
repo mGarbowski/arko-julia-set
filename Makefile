@@ -1,18 +1,4 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c99
-LDFLAGS = -lX11
+LIB = -I/usr/include/x86_64-linux-gnu -lallegro_font -lallegro
 
-SOURCES = main.c
-OBJECTS = $(SOURCES:.c=.o)
-EXECUTABLE = empty_window
-
-all: $(EXECUTABLE)
-
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
-
-.c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
-
-clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+all: hello.c
+	gcc hello.c -o hello $(LIB)
