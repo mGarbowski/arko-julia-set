@@ -1,6 +1,9 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 
+int WIDTH = 320;
+int HEIGHT = 200;
+
 int main()
 {
     al_init();
@@ -8,7 +11,7 @@ int main()
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
     ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-    ALLEGRO_DISPLAY* disp = al_create_display(320, 200);
+    ALLEGRO_DISPLAY* disp = al_create_display(800, 640);
     ALLEGRO_FONT* font = al_create_builtin_font();
 
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -16,6 +19,16 @@ int main()
 
     bool redraw = true;
     ALLEGRO_EVENT event;
+
+    uint8_t pixels[320*200*3];
+    for (int row = 0; row < 200; row++) {
+        for (int col = 0; col < 320; col++) {
+            int pixelIdx = 3 * (row * HEIGHT + col);
+            pixels[pixelIdx] = 0;
+            pixels[pixelIdx+1] = 255;
+            pixels[pixelIdx+2] = 0;
+        }
+    }
 
     al_start_timer(timer);
     while(1)
@@ -30,7 +43,12 @@ int main()
         if(redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world!");
+            for (int row = 0; row < 200; row++) {
+                for (int col = 0; col < 320; col++) {
+                    int pixelIdx = 3 * (row * HEIGHT + col);
+                    al_draw_pixel(col, row, al_map_rgb(pixels[pixelIdx], pixels[pixelIdx+1], pixels[pixelIdx+2]));
+                }
+            }
             al_flip_display();
 
             redraw = false;
