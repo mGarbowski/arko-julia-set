@@ -9,11 +9,11 @@ void generateJuliaSet(uint8_t *pixels, int width, int height, double escapeRadiu
     int centerImag = height / 2;
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            double zReal = (col - centerReal) * escapeRadius / width;
-            double zImag = (row - centerImag) * escapeRadius / height;
+            double zReal = (col - centerReal) * escapeRadius * 2 / width;
+            double zImag = (row - centerImag) * escapeRadius * 2 / height;
 
             int iteration = 0;
-            int maxIteration = 1000;
+            int maxIteration = 100;
 
             while (zReal * zReal + zImag * zImag < escapeRadius * escapeRadius && iteration < maxIteration) {
                 double tmpReal = zReal * zReal - zImag * zImag;
@@ -43,6 +43,21 @@ void generateJuliaSet(uint8_t *pixels, int width, int height, double escapeRadiu
     }
 }
 
+/**
+ * Display 24-bit RGB pixels stored in an array on the currently active bitmap
+ * @param pixelArray - array of RGB pixel values
+ * @param width - width of the pixel array
+ * @param height - height of the pixel array
+ */
+void displayRGBPixels(uint8_t *pixelArray, int width, int height) {
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++) {
+            int pixelIdx = 3 * (row * height + col);
+            al_draw_pixel(col, row, al_map_rgb(pixelArray[pixelIdx], pixelArray[pixelIdx+1], pixelArray[pixelIdx+2]));
+        }
+    }
+}
+
 int main()
 {
     al_init();
@@ -60,7 +75,14 @@ int main()
     ALLEGRO_EVENT event;
 
     uint8_t pixels[WIDTH*HEIGHT*3];
-    generateJuliaSet(pixels, WIDTH, HEIGHT, 2.0, 0.248, 0.1);
+    double cReal = 0.248;
+    double cImag = 0.1;
+    double deltaC = 0.05;
+    double escapeRadius = 2.0;
+
+    generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag);
+    displayRGBPixels(pixels, WIDTH, HEIGHT);
+
 
     al_start_timer(timer);
     while(1)
@@ -74,13 +96,8 @@ int main()
 
         if(redraw && al_is_event_queue_empty(queue))
         {
-            al_clear_to_color(al_map_rgb(0, 0, 0));
-            for (int row = 0; row < HEIGHT; row++) {
-                for (int col = 0; col < WIDTH; col++) {
-                    int pixelIdx = 3 * (row * HEIGHT + col);
-                    al_draw_pixel(col, row, al_map_rgb(pixels[pixelIdx], pixels[pixelIdx+1], pixels[pixelIdx+2]));
-                }
-            }
+            generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag);
+            displayRGBPixels(pixels, WIDTH, HEIGHT);
             al_flip_display();
 
             redraw = false;
