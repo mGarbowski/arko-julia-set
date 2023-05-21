@@ -4,11 +4,15 @@
 int WIDTH = 512;
 int HEIGHT = 512;
 
+double max(double a, double b) {
+    return (a < b) ? b : a;
+}
+
 void generateJuliaSet(uint8_t *pixels, int width, int height, double escapeRadius, double cReal, double cImag, double centerReal, double centerImag, double zoom) {
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            double zReal = (col - centerReal) * escapeRadius * 2 / width;
-            double zImag = (row - centerImag) * escapeRadius * 2 / height;
+            double zReal = (col - centerReal) * escapeRadius * 2 / (width * zoom);
+            double zImag = (row - centerImag) * escapeRadius * 2 / (height * zoom);
 
             int iteration = 0;
             int maxIteration = 100;
@@ -113,6 +117,12 @@ int main() {
                 offsetImag += deltaOffset;
             } else if (event.keyboard.keycode == ALLEGRO_KEY_D) {
                 offsetReal += deltaOffset;
+            }
+
+            if (event.keyboard.keycode == ALLEGRO_KEY_Q) {
+                zoom = max(zoom - deltaZoom, 0);
+            } else if (event.keyboard.keycode == ALLEGRO_KEY_E) {
+                zoom += deltaZoom;
             }
 
             redraw = true;
