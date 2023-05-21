@@ -1,7 +1,7 @@
 LIB = -I/usr/include/x86_64-linux-gnu -lallegro_font -lallegro
 
-all: hello.c
-	gcc hello.c -o hello $(LIB)
+all: julia.c
+	gcc julia.c -o julia $(LIB)
 
 clean:
-	rm hello
+	rm julia

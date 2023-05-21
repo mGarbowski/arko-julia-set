@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(Hello C)
+project(Julia C)
 
 set(CMAKE_C_STANDARD 11)
 
@@ -8,10 +8,10 @@ set(ALLEGRO_INCLUDE_DIR "/usr/include/x86_64-linux-gnu")
 set(ALLEGRO_LIBRARIES "-lallegro_font -lallegro")
 
 # Add the executable target
-add_executable(hello hello.c)
+add_executable(julia julia.c)
 
 # Include directories for Allegro
-target_include_directories(hello PRIVATE ${ALLEGRO_INCLUDE_DIR})
+target_include_directories(julia PRIVATE ${ALLEGRO_INCLUDE_DIR})
 
 # Link Allegro libraries
-target_link_libraries(hello PRIVATE ${ALLEGRO_LIBRARIES})
+target_link_libraries(julia PRIVATE ${ALLEGRO_LIBRARIES})
