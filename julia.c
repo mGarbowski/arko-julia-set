@@ -1,5 +1,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
+#include <stdio.h>
+#include "test.h"
 
 int WIDTH = 512;
 int HEIGHT = 512;
@@ -59,6 +61,8 @@ void displayRGBPixels(uint8_t *pixelArray, int width, int height) {
 }
 
 int main() {
+    int t = getFive();
+    printf("ASM result: %d", t);
     al_init();
     al_install_keyboard();
 
