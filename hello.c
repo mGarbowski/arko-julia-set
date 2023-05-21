@@ -1,12 +1,10 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 
-int WIDTH = 800;
-int HEIGHT = 640;
+int WIDTH = 512;
+int HEIGHT = 512;
 
-void generateJuliaSet(uint8_t *pixels, int width, int height, double escapeRadius, double cReal, double cImag) {
-    int centerReal = width / 2;
-    int centerImag = height / 2;
+void generateJuliaSet(uint8_t *pixels, int width, int height, double escapeRadius, double cReal, double cImag, double centerReal, double centerImag, double zoom) {
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
             double zReal = (col - centerReal) * escapeRadius * 2 / width;
@@ -72,12 +70,19 @@ int main() {
     ALLEGRO_EVENT event;
 
     uint8_t pixels[WIDTH * HEIGHT * 3];
+    double offsetReal = (double)WIDTH / 2;
+    double offsetImag = (double)HEIGHT / 2;
+    double zoom = 1.0;
+
     double cReal = 0.248;
     double cImag = 0.1;
-    double deltaC = 0.05;
     double escapeRadius = 2.0;
 
-    generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag);
+    double deltaOffset = 10.0;
+    double deltaC = 0.05;
+    double deltaZoom = 0.05;
+
+    generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
     displayRGBPixels(pixels, WIDTH, HEIGHT);
 
 
@@ -99,6 +104,17 @@ int main() {
             } else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) {
                 cImag -= deltaC;
             }
+
+            if (event.keyboard.keycode == ALLEGRO_KEY_W) {
+                offsetImag -= deltaOffset;
+            } else if (event.keyboard.keycode == ALLEGRO_KEY_A) {
+                offsetReal -= deltaOffset;
+            } else if (event.keyboard.keycode == ALLEGRO_KEY_S) {
+                offsetImag += deltaOffset;
+            } else if (event.keyboard.keycode == ALLEGRO_KEY_D) {
+                offsetReal += deltaOffset;
+            }
+
             redraw = true;
 
         } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -106,7 +122,7 @@ int main() {
         }
 
         if (redraw && al_is_event_queue_empty(queue)) {
-            generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag);
+            generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
             displayRGBPixels(pixels, WIDTH, HEIGHT);
             al_flip_display();
 
