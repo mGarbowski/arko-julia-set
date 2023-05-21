@@ -1,7 +1,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <stdio.h>
-#include "test.h"
+#include "generateJuliaSet.h"
 
 int WIDTH = 512;
 int HEIGHT = 512;
@@ -10,9 +10,9 @@ double max(double a, double b) {
     return (a < b) ? b : a;
 }
 
-void generateJuliaSet(uint8_t *pixels, int width, int height, double escapeRadius, double cReal, double cImag, double centerReal, double centerImag, double zoom) {
-    for (int row = 0; row < height; row++) {
-        for (int col = 0; col < width; col++) {
+void generateJuliaSetC(uint8_t *pixels, int width, int height, double escapeRadius, double cReal, double cImag, double centerReal, double centerImag, double zoom) {
+    for (int row = height-1; row >= 0; row--) {
+        for (int col = width-1; col >= 0; col--) {
             double zReal = (col - centerReal) * escapeRadius * 2 / (width * zoom);
             double zImag = (row - centerImag) * escapeRadius * 2 / (height * zoom);
 
@@ -61,8 +61,6 @@ void displayRGBPixels(uint8_t *pixelArray, int width, int height) {
 }
 
 int main() {
-    int t = getFive();
-    printf("ASM result: %d", t);
     al_init();
     al_install_keyboard();
 
@@ -90,7 +88,7 @@ int main() {
     double deltaC = 0.05;
     double deltaZoom = 0.05;
 
-    generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
+    generateJuliaSetC(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
     displayRGBPixels(pixels, WIDTH, HEIGHT);
 
 
@@ -136,7 +134,7 @@ int main() {
         }
 
         if (redraw && al_is_event_queue_empty(queue)) {
-            generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
+            generateJuliaSetC(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
             displayRGBPixels(pixels, WIDTH, HEIGHT);
             al_flip_display();
 
