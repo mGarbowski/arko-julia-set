@@ -12,6 +12,6 @@ set(ALLEGRO_INCLUDE_DIR "/usr/include/x86_64-linux-gnu")
 set(ALLEGRO_LIBRARIES "-lallegro_font -lallegro")
 
 # Add the executable target
-add_executable(julia julia.c test.h test.asm)
+add_executable(julia julia.c generateJuliaSet.h generateJuliaSet.asm)
 target_include_directories(julia PRIVATE ${ALLEGRO_INCLUDE_DIR}) # Include directories for Allegro
 target_link_libraries(julia PRIVATE ${ALLEGRO_LIBRARIES}) # Link Allegro libraries

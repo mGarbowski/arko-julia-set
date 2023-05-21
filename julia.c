@@ -88,7 +88,7 @@ int main() {
     double deltaC = 0.05;
     double deltaZoom = 0.05;
 
-    generateJuliaSetC(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
+    generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
     displayRGBPixels(pixels, WIDTH, HEIGHT);
 
 
@@ -134,7 +134,7 @@ int main() {
         }
 
         if (redraw && al_is_event_queue_empty(queue)) {
-            generateJuliaSetC(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
+            generateJuliaSet(pixels, WIDTH, HEIGHT, escapeRadius, cReal, cImag, offsetReal, offsetImag, zoom);
             displayRGBPixels(pixels, WIDTH, HEIGHT);
             al_flip_display();
 
