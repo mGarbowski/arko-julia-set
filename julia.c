@@ -28,7 +28,7 @@ void generateJuliaSetC(uint8_t *pixels, int width, int height, double escapeRadi
             }
 
             uint8_t r, g, b;
-            r = (uint8_t) ((double) ((maxIteration - iteration) * 255) / maxIteration);
+            r = ((maxIteration - iteration) * 255) / maxIteration;
             g = 0;
             b = 0;
 
