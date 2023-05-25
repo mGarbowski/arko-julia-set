@@ -52,6 +52,9 @@ colLoop:
 	; rax = iteration = 0
 	mov		rax, 0
 
+	; Push xmm3 and xmm4 to make room for temporary calculation results
+	movsd		qword [rbp-24], xmm3
+	movsd		qword [rbp-32], xmm4
 pixelWhileLoop:
 	;
 	;	Check loop conditions
@@ -61,7 +64,6 @@ pixelWhileLoop:
 	cmp		rax, 128
 	je		pixelWhileLoopEnd
 
-	; can use xmm3 and xmm4 - centerReal and centerImag no longer needed
 	; xmm3 = tmp1 = zReal * zReal + zImag * zImag
 	movsd	xmm3, xmm6		; tmp1 = zReal
 	mulsd	xmm3, xmm3		; tmp1 = zReal * zReal
@@ -102,6 +104,10 @@ pixelWhileLoop:
 
 	jmp		pixelWhileLoop	; closeLoop
 pixelWhileLoopEnd:
+	; restore xmm3 and xmm4
+    movsd		xmm4, qword [rbp-32]
+	movsd		xmm3, qword [rbp-24]
+
 	; rcx = uint8_t r = ((maxIteration - iteration) * 255) / maxIteration;
 	mov		rcx, 128		; rcx = maxIteration
 	sub		rcx, rax		; rcx = maxIteration - iteration
