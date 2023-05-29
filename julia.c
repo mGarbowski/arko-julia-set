@@ -75,7 +75,7 @@ int main() {
     bool redraw = true;
     ALLEGRO_EVENT event;
 
-    uint8_t pixels[WIDTH * HEIGHT * 3];
+    uint8_t *pixels = malloc(WIDTH * HEIGHT * 3);
     double offsetReal = (double)WIDTH / 2;
     double offsetImag = (double)HEIGHT / 2;
     double zoom = 1.0;
@@ -147,5 +147,6 @@ int main() {
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
 
+    free(pixels);
     return 0;
 }
