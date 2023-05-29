@@ -28,33 +28,27 @@ rowLoop:
 	mov		r9, rsi
 	sub		r9, 1
 colLoop:
-	movsd		qword [rbp - 24], xmm1		; push xmm1, make room for temporary variable
 	; xmm6 = zReal
 	cvtsi2sd	xmm6, r9	; zReal = col
 	subsd		xmm6, xmm3	; zReal = col - centerReal
 	mulsd		xmm6, xmm0	; zReal = (col - centerReal) * escapeRadius
 	addsd		xmm6, xmm6 	; zReal = (col - centerReal) * escapeRadius * 2
-	cvtsi2sd	xmm1, rsi	; xmm1 = width
-	mulsd		xmm1, xmm5	; xmm1 = (width * zoom)
-	divsd		xmm6, xmm1	; zReal = (col - centerReal) * escapeRadius * 2 / (width * zoom)
+	cvtsi2sd	xmm8, rsi	; xmm8 = width
+	mulsd		xmm8, xmm5	; xmm8 = (width * zoom)
+	divsd		xmm6, xmm8	; zReal = (col - centerReal) * escapeRadius * 2 / (width * zoom)
 
 	; xmm7 = zImag
 	cvtsi2sd	xmm7, r8	; zImag = row
 	subsd		xmm7, xmm4	; zImag = row - centerImag
 	mulsd		xmm7, xmm0 	; zImag = (row - centerImag) * escapeRadius
 	addsd		xmm7, xmm7	; zImag = (row - centerImag) * escapeRadius * 2
-	cvtsi2sd	xmm1, rdx	; xmm1 = height
-	mulsd		xmm1, xmm5 	; xmm1 = (height * zoom)
-	divsd		xmm7, xmm1 	; (row - centerImag) * escapeRadius * 2 / (height * zoom)
-
-	movsd		xmm1, qword [rbp - 24]		; pop xmm1, restore
+	cvtsi2sd	xmm8, rdx	; xmm8 = height
+	mulsd		xmm8, xmm5 	; xmm8 = (height * zoom)
+	divsd		xmm7, xmm8 	; (row - centerImag) * escapeRadius * 2 / (height * zoom)
 
 	; rax = iteration = 0
 	mov		rax, 0
 
-	; Push xmm3 and xmm4 to make room for temporary calculation results
-	movsd		qword [rbp-24], xmm3
-	movsd		qword [rbp-32], xmm4
 pixelWhileLoop:
 	;
 	;	Check loop conditions
@@ -64,31 +58,31 @@ pixelWhileLoop:
 	cmp		rax, 128
 	je		pixelWhileLoopEnd
 
-	; xmm3 = tmp1 = zReal * zReal + zImag * zImag
-	movsd	xmm3, xmm6		; tmp1 = zReal
-	mulsd	xmm3, xmm3		; tmp1 = zReal * zReal
-	movsd	xmm4, xmm7		; xmm4 = zImag
-	mulsd	xmm4, xmm4		; xmm4 = zImag * zImag
-	addsd	xmm3, xmm4		; tmp1 = zReal * zReal + zImag * zImag
+	; xmm8 = tmp1 = zReal * zReal + zImag * zImag
+	movsd	xmm8, xmm6		; tmp1 = zReal
+	mulsd	xmm8, xmm8		; tmp1 = zReal * zReal
+	movsd	xmm9, xmm7		; xmm9 = zImag
+	mulsd	xmm9, xmm9		; xmm9 = zImag * zImag
+	addsd	xmm8, xmm9		; tmp1 = zReal * zReal + zImag * zImag
 
-	; xmm4 = tmp2 = escapeRadius * escapeRadius
-	movsd	xmm4, xmm0		; tmp2 = escapeRadius
-	mulsd	xmm4, xmm4		; tmp2 = escapeRadius * escapeRadius
+	; xmm9 = tmp2 = escapeRadius * escapeRadius
+	movsd	xmm9, xmm0		; tmp2 = escapeRadius
+	mulsd	xmm9, xmm9		; tmp2 = escapeRadius * escapeRadius
 
 	; break if (zReal * zReal + zImag * zImag) >= (escapeRadius * escapeRadius) (fisrt condition)
-	comisd	xmm3, xmm4
+	comisd	xmm8, xmm9
 	jae		pixelWhileLoopEnd
 
 	;
 	; Loop body
 	;
 
-	; xmm3 = tmpReal = zReal * zReal - zImag * zImag
-	movsd	xmm3, xmm6		; xmm3 = zReal
-	mulsd	xmm3, xmm3		; xmm3 = zReal * zReal
-	movsd	xmm4, xmm7		; xmm4 = zImag
-	mulsd	xmm4, xmm4		; xmm4 = zImag * zImag
-	subsd	xmm3, xmm4		; xmm3 = tmpReal = zReal * zReal - zImag * zImag
+	; xmm8 = tmpReal = zReal * zReal - zImag * zImag
+	movsd	xmm8, xmm6		; xmm8 = zReal
+	mulsd	xmm8, xmm8		; xmm8 = zReal * zReal
+	movsd	xmm9, xmm7		; xmm9 = zImag
+	mulsd	xmm9, xmm9		; xmm9 = zImag * zImag
+	subsd	xmm8, xmm9		; xmm8 = tmpReal = zReal * zReal - zImag * zImag
 
 	; xmm7 = zImag = 2 * zReal * zImag + cImag
 	addsd	xmm7, xmm7		; xmm7 = 2 * zImag
@@ -96,7 +90,7 @@ pixelWhileLoop:
 	addsd	xmm7, xmm2		; xmm7 = zImag = 2 * zReal * zImag + cImag
 
 	; xmm6 = zReal = tmpReal + cReal
-	movsd	xmm6, xmm3
+	movsd	xmm6, xmm8
 	addsd	xmm6, xmm1
 
 	; iteration++
@@ -104,9 +98,6 @@ pixelWhileLoop:
 
 	jmp		pixelWhileLoop	; closeLoop
 pixelWhileLoopEnd:
-	; restore xmm3 and xmm4
-    movsd		xmm4, qword [rbp-32]
-	movsd		xmm3, qword [rbp-24]
 
 	; rcx = uint8_t r = ((maxIteration - iteration) * 255) / maxIteration;
 	mov		rcx, 128		; rcx = maxIteration
