@@ -1,6 +1,5 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
-#include <stdio.h>
 #include "generateJuliaSet.h"
 
 int WIDTH = 600;
