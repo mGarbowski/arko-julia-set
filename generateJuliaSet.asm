@@ -105,13 +105,13 @@ pixelWhileLoopEnd:
 	imul	rcx, 255		; rcx = (maxIteration - iteration) * 255
 	sar		rcx, 7			; rcx = (maxIteration - iteration) * 255 / maxIteration (maxIteration == 128 == 2^7)
 
-	; rbx = pixelIdx = 3 * (row * height + col)
+	; rbx = pixelIdx = 3 * (row * width + col)
 	mov		rbx, r8			; rbx = row
-	imul	rbx, rdx		; rbx = row * height
-	add		rbx, r9			; rbx = row * height + col
-	mov		r12, rbx		; r12 = 1 * (row * height + col)
-	shl		rbx, 1			; rbx = 2 * (row * height + col)
-	add		rbx, r12		; rbx = 3 * (row * height + col)
+	imul	rbx, rsi		; rbx = row * width
+	add		rbx, r9			; rbx = row * width + col
+	mov		r12, rbx		; r12 = 1 * (row * width + col)
+	shl		rbx, 1			; rbx = 2 * (row * width + col)
+	add		rbx, r12		; rbx = 3 * (row * width + col)
 
 	mov 	[rdi + rbx], cl				; *(pixels + pixelIdx) = r
 	mov		byte [rdi + rbx + 1], 0		; *(pixels + pixelIdx + 1) = 0

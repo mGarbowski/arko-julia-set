@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "generateJuliaSet.h"
 
-int WIDTH = 512;
+int WIDTH = 600;
 int HEIGHT = 512;
 
 double max(double a, double b) {
@@ -32,7 +32,7 @@ void generateJuliaSetC(uint8_t *pixels, int width, int height, double escapeRadi
             g = 0;
             b = 0;
 
-            int pixelIdx = 3 * (row * height + col);
+            int pixelIdx = 3 * (row * width + col);
             *(pixels + pixelIdx) = r;
             *(pixels + pixelIdx + 1) = g;
             *(pixels + pixelIdx + 2) = b;
@@ -50,7 +50,7 @@ void generateJuliaSetC(uint8_t *pixels, int width, int height, double escapeRadi
 void displayRGBPixels(uint8_t *pixelArray, int width, int height) {
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
-            int pixelIdx = 3 * (row * height + col);
+            int pixelIdx = 3 * (row * width + col);
             al_draw_pixel(col, row, al_map_rgb(
                     pixelArray[pixelIdx],
                     pixelArray[pixelIdx + 1],
